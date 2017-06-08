@@ -53,25 +53,20 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <script>
-
     var name = 'Guest';
     var room = '100';
-
-    var socket = null;
+    var socket = io.connect();
 
     function writeMessage(type, name, message) {
         var html = '<div>{MESSAGE}</div>';
-
         var printName = '';
         printName = name + ' : ';
-        
 
         html = html.replace('{MESSAGE}', printName + message);
 
         $(html).appendTo('.j-message');
         $('body').stop();
         $('body').animate({scrollTop:$('body').height()}, 500);
-
     }
 
     function changeName(changeName){
@@ -91,7 +86,7 @@
 
     $(document).ready(function() {
 
-        var socket = io();
+        
 
         socket.on('connection', function(data) {
             console.log('connect');
@@ -113,9 +108,7 @@
         });
 
         $('#message-button').click(function() {
-
             var $input = $('#message-input');
-
             var msg = $input.val();
             sender(msg);
             $input.val('');
