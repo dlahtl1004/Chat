@@ -10,7 +10,7 @@ var server = app.listen(PORT,(function(req, res){
         res.write(data);
         res.end();
     })
-})
+}));
 var socket = require("socket.io");
 var io=socket.listen(app);
 io.sockets.on('connection', socket => {
