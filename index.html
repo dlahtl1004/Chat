@@ -10,7 +10,17 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
     <style>
+        .layerfix {
+            width:100%;
+            color: #555;
+            font-size:12px;
+            z-index:999;
+            position:fixed;
+            background-color:white;
+        }
         .j-message {
+            position: relative;
+            top: 500px;
             margin-bottom:50px;
         }
         .j-footer {
@@ -29,12 +39,17 @@
 
 <body>
 <script src="/socket.io/socket.io.js"></script>
-    
+<div class="layerfix">
+    <table>
+        <tr>
+            <canvas id="can1" width= 2000 height="500" style="float: left; border: 1px solid #000;" ></canvas>
+        </tr>
+    </table>
+</div>
 <div class="j-message">
 
 </div>
 <div class="j-footer">
-
     <table>
         <tr>
             <td width="100%">
@@ -43,20 +58,47 @@
             <td width="20%">
                 <button id="message-button" class="btn btn-default" type="submit">SEND</button>
             </td>
+            <td width="20%">
+                <button id="eraseButton" class="btn btn-default" type="submit">ERASE</button>
+            </td>
         </tr>
     </table>
-
 </div>
 
 <script type="text/javascript" src="http://cdn.socket.io/socket.io-1.4.0.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
+
 <script>
     var name = 'Guest';
     var room = '100';
+    var canvas = document.getElementById("can1");
+    var cv = canvas.getContext("2d");
+    var press = 0;
     var socket = io.connect();
-
+    function startDraw(x,y){
+        cv.beginPath();
+        cv.moveTo(x, y);
+        cv.stroke();
+        cv.lineWidth = 3;;
+        press =1;
+    }
+    function drawing(x,y){
+        if(press == 1){
+            cv.lineTo(x,y);
+            cv.stroke();
+            cv.lineWidth = 3;
+            cv.closwPath();
+        }
+    }
+    function endDraw(){
+        press = 0;
+    }
+    function clearCanvas(){
+        cv.fillStyle = "white";
+        cv.fillRect(0,0,2000,5000);
+    }
     function writeMessage(type, name, message) {
         var html = '<div>{MESSAGE}</div>';
         var printName = '';
@@ -86,8 +128,6 @@
 
     $(document).ready(function() {
 
-        
-
         socket.on('connection', function(data) {
             console.log('connect');
             if(data.type === 'connected') {
@@ -106,15 +146,28 @@
         socket.on('message', function(data) {
             writeMessage('other', data.name, data.message);
         });
-
+        
+        socket.on('start', function(data) {
+            startDraw(data.x,data.y);
+        });
+        
+        socket.on('draw', function(data) {
+            drawing(data.x, data.y);
+        });
+        
+        socket.on('end',function() {
+            endDraw();
+        });
+        socket.on('erase',function(){
+            clearCanvas();
+        });
         $('#message-button').click(function() {
             var $input = $('#message-input');
             var msg = $input.val();
             sender(msg);
             $input.val('');
             $input.focus();
-
-
+            
         });
 
         $('#message-input').on('keypress', function(e) {
@@ -134,10 +187,34 @@
                 $input.focus();
             }
         });
+        $('#eraseButton').click(function(){
+            socket.emit('eraseCanvas');
+            clearCanvas();
+        });
+        canvas.onmousedown = function (event) {
+            var x = event.x;
+            var y = event.y;
+            socket.emit('startDraw',{
+                x: x,
+                y: y
+            });
+            startDraw(x,y);
+        }
+        canvas.onmousemove = function(event){
+            var x = event.x;
+            var y = event.y;
+            socket.emit('drawing',{
+                x: x,
+                y: y
+            });
+            drawing(x,y);
+        }
+        canvas.onmouseup = function (event) {
+            socket.emit('endDraw');
+            endDraw();
+        }
 
     });
-
 </script>
-
 </body>
 </html>

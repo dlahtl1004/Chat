@@ -21,7 +21,7 @@ io.sockets.on('connection', socket => {
     socket.on('connection', data => {
 
         if(data.type === 'join') {
-
+            
             socket.join(data.room);
 
             // depracated
@@ -36,7 +36,7 @@ io.sockets.on('connection', socket => {
                 message : `${data.name} is connected`
             });
         }
-
+        
     });
 
     socket.on('user', data => {
@@ -44,14 +44,40 @@ io.sockets.on('connection', socket => {
         // depracated
         // socket.get('room', (error, room) => {
         // });
-
+        
         var room = socket.room;
-
+        
         if(room) {
             socket.broadcast.to(room).emit('message', data);
         }
     });
+    
+    socket.on('startDraw', data => {
+        var room = socket.room;
+        if(room) {
+            socket.broadcast.to(room).emit('start', data);
+        }
+    });
 
+    socket.on('drawing', data => {
+        var room = socket.room;
+        if(room) {
+            socket.broadcast.to(room).emit('draw', data);
+        }
+    });
+    
+    socket.on('endDraw', data => {
+        var room = socket.room;
+        if(room) {
+            socket.broadcast.to(room).emit('end');
+        }
+    });
+    socket.on('eraseCanvas',data=>{
+        var room = socket.room;
+        if(room) {
+            socket.broadcast.to(room).emit('erase');
+        }
+    });
 });
 
 

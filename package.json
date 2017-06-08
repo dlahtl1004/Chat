@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dlahtl1004/chat.git"
+    "url": "git+https://github.com/dlahtl1004/chat"
   },
   "keywords": [
     "chat",
@@ -22,13 +22,7 @@
     "websocket"
   ],
   "author": "dlahtl1004",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/dlahtl1004/chat.git"
-  },
-  "homepage": "https://github.com/dlahtl1004/chat.git#readme",
   "dependencies": {
-    "socket.io": "^1.7.2",
-    "express": "~4.13.1"
+    "socket.io": "^1.7.2"
   }
 }
