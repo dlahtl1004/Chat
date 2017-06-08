@@ -1,16 +1,14 @@
 'use strict';
 var PORT = process.env.PORT || 8000;
-var express = require('express');
-var app = express();
-//var router = require('./')(app);
 var fs = require('fs');
-var server = app.listen(PORT,(function(req, res){
+var http = require('http');
+var app =http.createServer(function(req, res){
     fs.readFile('index.html',function (err, data){
         res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
         res.write(data);
         res.end();
-    })
-}));
+    });
+}).listen(PORT);
 var socket = require("socket.io");
 var io=socket.listen(app);
 io.sockets.on('connection', socket => {
