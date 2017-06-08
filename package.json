@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/dlahtl1004/chat.git#readme",
   "dependencies": {
-    "socket.io": "^1.7.2"
+    "socket.io": "^1.7.2",
+    "express": "~4.13.1"
   }
 }
