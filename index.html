@@ -28,7 +28,8 @@
 </head>
 
 <body>
-
+<script src="/socket.io/socket.io.js"></script>
+    
 <div class="j-message">
 
 </div>
@@ -52,8 +53,6 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <script>
-
-    var serverURL = '/';
 
     var name = 'Guest';
     var room = '100';
@@ -92,7 +91,7 @@
 
     $(document).ready(function() {
 
-        var socket = io.connect(serverURL);
+        var socket = io();
 
         socket.on('connection', function(data) {
             console.log('connect');
