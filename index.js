@@ -1,7 +1,7 @@
 'use strict';
-var SPORT = process.env.PORT || 50000;
-var CPORT = process.env.PORT || 8000;
-const io = require('socket.io').listen(SPORT);
+var PORT = process.env.PORT || 50000;
+
+const io = require('socket.io').listen(PORT);
 
 io.sockets.on('connection', socket => {
 
@@ -45,14 +45,3 @@ io.sockets.on('connection', socket => {
 
 });
 
-var http = require('http');
-var fs = require('fs');
-
-
-http.createServer(function(req, res){
-    fs.readFile('index.html',function (err, data){
-        res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
-        res.write(data);
-        res.end();
-    });
-}).listen(CPORT);

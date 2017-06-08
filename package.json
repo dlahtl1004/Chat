@@ -7,11 +7,11 @@
     "socket": "node index.js",
     "web": "node webserver.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/devjin0617/nodejs-socket.io-chat-example.git"
+    "url": "git+https://github.com/dlahtl1004/chat.git"
   },
   "keywords": [
     "chat",
@@ -21,13 +21,4 @@
     "tcp",
     "websocket"
   ],
-  "author": "devjin0617",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/devjin0617/nodejs-socket.io-chat-example/issues"
-  },
-  "homepage": "https://github.com/devjin0617/nodejs-socket.io-chat-example#readme",
-  "dependencies": {
-    "socket.io": "^1.7.2"
-  }
 }
