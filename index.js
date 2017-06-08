@@ -7,7 +7,7 @@ var app =http.createServer(function(req, res){
         res.write(data);
         res.end();
     });
-}).listen(port);
+}).listen(PORT);
 
 const io = require('socket.io');
 io=socket.listen(app);
