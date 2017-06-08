@@ -1,8 +1,16 @@
 'use strict';
-var PORT = process.env.PORT || 50000;
+var PORT = process.env.PORT || 8000;
+var fs = require('fs');
+var app =http.createServer(function(req, res){
+    fs.readFile('index.html',function (err, data){
+        res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
+        res.write(data);
+        res.end();
+    });
+}).listen(port);
 
-const io = require('socket.io').listen(PORT);
-
+const io = require('socket.io');
+io=socket.listen(app);
 io.sockets.on('connection', socket => {
 
     socket.emit('connection', {
@@ -45,13 +53,4 @@ io.sockets.on('connection', socket => {
 
 });
 
-var http = require('http');
-var fs = require('fs');
 
-http.createServer(function(req, res){
-    fs.readFile('index.html',function (err, data){
-        res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
-        res.write(data);
-        res.end();
-    });
-}).listen(PORT);
