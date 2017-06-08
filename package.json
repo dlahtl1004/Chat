@@ -8,7 +8,6 @@
     "web": "node webserver.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "start": "node client.js"
   },
   "repository": {
     "type": "git",
