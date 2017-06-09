@@ -49,11 +49,7 @@
 <body>
 <script src="/socket.io/socket.io.js"></script>
 <div id = "quiz" class="layerfix2" style="display:none">
-    <table>
-        <tr>
-            <b>apple</b>
-        </tr>
-    </table>
+
 </div>
 <div class="layerfix">
     <table>
@@ -116,6 +112,12 @@
     function clearCanvas(){
         cv.fillStyle = "white";
         cv.fillRect(0,0,2000,5000);
+    }
+    function addQuiz(answer){
+        var html = '<div id = "A">{MESSAGE}</div>';
+        html = html.replace('{MESSAGE}',answer);
+        $("#A").remove();
+        $(html).appendTo('.layerfix2');
     }
     function writeMessage(type, name, message) {
         var html = '<div>{MESSAGE}</div>';
@@ -205,41 +207,52 @@
             if(e.keyCode === 33) {
                 var $input = $('#message-input');
                 var msg = $input.val();
-                changeName(msg);
+                if(isHost == 1){
+                    addQuiz(msg);
+                }
+                else{
+                    changeName(msg);
+                }
                 $input.val('');
                 $input.focus();
             }
         });
         
-        
-        if(isHost == 1){
             $('#eraseButton').click(function(){
-                socket.emit('eraseCanvas');
-                clearCanvas();
+                if(isHost == 1){
+                    socket.emit('eraseCanvas');
+                    clearCanvas();
+                }
             });
+            
             canvas.onmousedown = function (event) {
                 var x = event.x;
                 var y = event.y;
-                socket.emit('startDraw',{
+                if(isHost == 1){
+                     socket.emit('startDraw',{
                     x: x,
                     y: y
-                });
-                startDraw(x,y);
+                    });
+                    startDraw(x,y);
+                }
             }
             canvas.onmousemove = function(event){
                 var x = event.x;
                 var y = event.y;
-                socket.emit('drawing',{
-                    x: x,
-                    y: y
-                });
-                drawing(x,y);
+                if(isHost == 1){
+                    socket.emit('drawing',{
+                        x: x,
+                        y: y
+                    });
+                    drawing(x,y);
+                }
+                
             }
             canvas.onmouseup = function (event) {
                 socket.emit('endDraw');
                 endDraw();
             }
-        }
+        
     });
 </script>
 </body>
