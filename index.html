@@ -14,9 +14,18 @@
             width:100%;
             color: #555;
             font-size:12px;
-            z-index:999;
+            z-index:500;
             position:fixed;
             background-color:white;
+        }
+        .layerfix2 {
+            width:auto;
+            height:auto;
+            color: #555;
+            font-size:12px;
+            z-index:600;
+            position:fixed;
+            
         }
         .j-message {
             position: relative;
@@ -39,6 +48,13 @@
 
 <body>
 <script src="/socket.io/socket.io.js"></script>
+<div id = "quiz" class="layerfix2" style="display:none">
+    <table>
+        <tr>
+            <b>apple</b>
+        </tr>
+    </table>
+</div>
 <div class="layerfix">
     <table>
         <tr>
@@ -75,7 +91,9 @@
     var room = '100';
     var canvas = document.getElementById("can1");
     var cv = canvas.getContext("2d");
+    var quiz = document.getElementById("quiz");
     var press = 0;
+    var isHost = 0;
     var socket = io.connect();
     function startDraw(x,y){
         cv.beginPath();
@@ -99,6 +117,13 @@
         cv.fillStyle = "white";
         cv.fillRect(0,0,2000,5000);
     }
+    function writeQuiz(quiz){
+        var html = '<div>{MESSAGE}</div>';
+        html = html.replace('{MESSAGE}',quiz);
+        $(html).appendTo('.layerfix2');
+        quiz.setAttribute("style","display:block")
+    }
+    
     function writeMessage(type, name, message) {
         var html = '<div>{MESSAGE}</div>';
         var printName = '';
@@ -134,7 +159,8 @@
                 socket.emit('connection', {
                     type : 'join',
                     name : name,
-                    room : room
+                    room : room,
+                    isHost : isHost
                 });
             }
         });
@@ -142,7 +168,11 @@
         socket.on('system', function(data) {
             writeMessage('system', 'system', data.message);
         });
-
+        
+        socket.on('setHost', function(data){
+            isHost = data.isHost,
+            quiz.setAttribute("style","display:block")
+        });
         socket.on('message', function(data) {
             writeMessage('other', data.name, data.message);
         });
@@ -182,36 +212,44 @@
             if(e.keyCode === 33) {
                 var $input = $('#message-input');
                 var msg = $input.val();
-                changeName(msg);
-                $input.val('');
-                $input.focus();
+                
+                
+                    changeName(msg);
+                    $input.val('');
+                    $input.focus();
+                
+               
             }
         });
         $('#eraseButton').click(function(){
-            socket.emit('eraseCanvas');
-            clearCanvas();
+            if(isHost == 1){
+                socket.emit('eraseCanvas');
+                clearCanvas();
+            }
         });
-        canvas.onmousedown = function (event) {
-            var x = event.x;
-            var y = event.y;
-            socket.emit('startDraw',{
-                x: x,
-                y: y
-            });
-            startDraw(x,y);
-        }
-        canvas.onmousemove = function(event){
-            var x = event.x;
-            var y = event.y;
-            socket.emit('drawing',{
-                x: x,
-                y: y
-            });
-            drawing(x,y);
-        }
-        canvas.onmouseup = function (event) {
-            socket.emit('endDraw');
-            endDraw();
+        if(isHost == 1){
+            canvas.onmousedown = function (event) {
+                var x = event.x;
+                var y = event.y;
+                socket.emit('startDraw',{
+                    x: x,
+                    y: y
+                });
+                startDraw(x,y);
+            }
+            canvas.onmousemove = function(event){
+                var x = event.x;
+                var y = event.y;
+                socket.emit('drawing',{
+                    x: x,
+                    y: y
+                });
+                drawing(x,y);
+            }
+            canvas.onmouseup = function (event) {
+                socket.emit('endDraw');
+                endDraw();
+            }
         }
 
     });

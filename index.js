@@ -12,6 +12,8 @@ var app =http.createServer(function(req, res){
 
 var socket = require("socket.io");
 var io=socket.listen(app);
+
+var isHost = 0;
 io.sockets.on('connection', socket => {
 
     socket.emit('connection', {
@@ -31,6 +33,16 @@ io.sockets.on('connection', socket => {
             socket.emit('system', {
                 message : 'welcome to chat room'
             });
+            
+            if(isHost == 0){
+                socket.emit('setHost',{
+                    isHost : 1
+                });
+                isHost = 1;
+                socket.emit('system', {
+                    message : 'yout host'
+                });
+            }
 
             socket.broadcast.to(data.room).emit('system', {
                 message : `${data.name} is connected`
