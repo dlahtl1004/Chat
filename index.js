@@ -1,3 +1,4 @@
+
 'use strict';
 var PORT = process.env.PORT || 8000;
 var fs = require('fs');
@@ -12,7 +13,7 @@ var app =http.createServer(function(req, res){
 
 var socket = require("socket.io");
 var io=socket.listen(app);
-
+var Quiz;
 var isHost = 0;
 io.sockets.on('connection', socket => {
 
@@ -40,7 +41,7 @@ io.sockets.on('connection', socket => {
                 });
                 isHost = 1;
                 socket.emit('system', {
-                    message : 'yout host'
+                    message : 'your host'
                 });
             }
 
