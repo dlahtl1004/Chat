@@ -49,11 +49,7 @@
 <body>
 <script src="/socket.io/socket.io.js"></script>
 <div id = "quiz" class="layerfix2" style="display:none">
-    <table>
-        <tr>
-            <b>apple</b>
-        </tr>
-    </table>
+    
 </div>
 <div class="layerfix">
     <table>
@@ -119,9 +115,10 @@
     }
     function writeQuiz(quiz){
         var html = '<div>{MESSAGE}</div>';
-        html = html.replace('{MESSAGE}',quiz);
+        html = html.replace('{MESSAGE}',"<table id=\"answer\"><tr>"+quiz+"</tr></table>");
+        $("#answer").remove();
         $(html).appendTo('.layerfix2');
-        quiz.setAttribute("style","display:block")
+        
     }
     
     function writeMessage(type, name, message) {
@@ -212,13 +209,14 @@
             if(e.keyCode === 33) {
                 var $input = $('#message-input');
                 var msg = $input.val();
-                
-                
+                if(isHost === 1){
+                    writeQuiz(msg);
+                }
+                else {
                     changeName(msg);
-                    $input.val('');
-                    $input.focus();
-                
-               
+                }
+                $input.val('');
+                $input.focus();
             }
         });
         $('#eraseButton').click(function(){
