@@ -106,6 +106,9 @@
             cv.closwPath();
         }
     }
+    function setHost(){
+        socket.emit('setHost');
+    }
     function endDraw(){
         press = 0;
     }
@@ -118,6 +121,9 @@
         html = html.replace('{MESSAGE}',answer);
         $("#A").remove();
         $(html).appendTo('.layerfix2');
+        socket.emit('addQuiz',{
+            quiz: answer
+        });
     }
     function writeMessage(type, name, message) {
         var html = '<div>{MESSAGE}</div>';
@@ -147,9 +153,7 @@
     }
 
     $(document).ready(function() {
-
         socket.on('connection', function(data) {
-            console.log('connect');
             if(data.type === 'connected') {
                 socket.emit('connection', {
                     type : 'join',
@@ -186,6 +190,9 @@
         socket.on('erase',function(){
             clearCanvas();
         });
+        socket.on('eraseQuiz',function(){
+            quiz.setAttribute("style","display:none")
+        });
         $('#message-button').click(function() {
             var $input = $('#message-input');
             var msg = $input.val();
@@ -204,7 +211,7 @@
                 $input.focus();
             }
             
-            if(e.keyCode === 33) {
+            else if(e.keyCode === 33) {
                 var $input = $('#message-input');
                 var msg = $input.val();
                 if(isHost == 1){
@@ -213,8 +220,13 @@
                 else{
                     changeName(msg);
                 }
-                $input.val('');
                 $input.focus();
+                $input.val('');
+                
+            }
+            
+            else if(e.keyCode === 64){
+                setHost();
             }
         });
         
